@@ -4,13 +4,13 @@ import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBi2tNgLucv8amFPp9vCXJcM03kITvXtc4',
-  authDomain: 'lepas-aja.firebaseapp.com',
-  projectId: 'lepas-aja',
-  storageBucket: 'lepas-aja.appspot.com',
-  messagingSenderId: '472438318678',
-  appId: '1:472438318678:web:4ae14c27206c60238afdf7',
-  measurementId: 'G-79MSWQG7JC',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PRJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGIN_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
