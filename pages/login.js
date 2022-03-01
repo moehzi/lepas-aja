@@ -25,7 +25,8 @@ const login = () => {
     e.preventDefault();
 
     try {
-      setError('');
+      // setError('');
+      console.log(emailRef.current.value, passwordRef.current.value);
       await SignIn(emailRef.current.value, passwordRef.current.value);
       router.replace('/');
     } catch (err) {
@@ -37,7 +38,7 @@ const login = () => {
   const handleGoogleAuth = async () => {
     try {
       await GoogleAuth();
-      router.replace('/');
+      // router.replace('/');
     } catch (err) {
       const message = GetSignInErrorMessage(err.code);
       setError(message);

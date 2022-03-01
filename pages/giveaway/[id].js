@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import ProductDetail from '../../components/ProductDetail';
 import styles from '../../styles/Home.module.css';
 import Head from 'next/head';
@@ -5,14 +7,136 @@ import ParticipantList from '../../components/ParticipantList';
 import RoomInfo from '../../components/RoomInfo';
 import axios from 'axios';
 
+import { useUser } from '../../context/user';
+import participants1 from '../../data/participants';
+import { useRouter } from 'next/router';
+import moment from 'moment';
+
 const Event = () => {
-  axios
-    .get(
-      'https://virtserver.swaggerhub.com/ahmadnzr/LepasAja/1.0.0/rooms/5911a1cc-8780-4d1f-a509-45007d1ac8b0'
-    )
-    .then((res) => {
-      console.log(res.data.data);
+
+  const user = useUser();
+  const router = useRouter();
+  const participantLists = participants1;
+  const queryId = router.query.id;
+
+  console.log(queryId);
+
+  // State
+  const [dataRoom, setRoomData] = useState({});
+  const [dataBio, setDataBio] = useState({});
+  const [isParticipant, setIsParticipant] = useState(false);
+  const [participants, setParticipants] = useState({});
+  const [isJoinGA, setIsJoinGA] = useState(false);
+  const [totalParticipants, setTotalParticipants] = useState(1);
+  const [finishTime, setFinishTime] = useState(0);
+
+  const getProfileById = async () => {
+    console.log(user);
+    let response = await axios.get(
+      `https://lepasaja-backend.herokuapp.com/api/v1/users/${user.uid}`
+    );
+
+    let biodata = await response.data;
+    // console.log(biodata.data);
+    setDataBio(biodata.data);
+  }
+
+  const getRoomById = async () => {
+    let response = await axios.get(
+      `https://lepasaja-backend.herokuapp.com/api/v1/rooms/${queryId}`
+    );
+
+    let room = await response.data;
+    const tempDate1 = new Date(0);
+    const tempDate2 = new Date(0);
+    // console.log(new Date('10/01/2022'));
+    const difference = +new Date(`03/07/2022`) - +new Date();
+    console.log(difference);
+    // console.log(tempDate);
+    // console.log(moment.unix(room.data.startAt));
+    // console.log(moment.unix(room.data.finishAt));
+    console.log(new Date(tempDate1.setUTCSeconds(room.data.startAt)));
+    console.log(new Date(tempDate2.setUTCSeconds(room.data.finishAt)));
+    console.log(new Date(`2022-03-25T12:00:00Z`).getTime());
+    console.log(room.data.startAt);
+    console.log(room.data.finishAt);
+    // // await console.log(user.token);
+    setRoomData(room.data);
+    setParticipants(room.data.participants);
+    console.log(participants);
+    setIsParticipant(true);
+    setTotalParticipants(room.data.participants.length);
+    console.log(isJoinGA);
+    await checkIsJoinRoom(room.data.participants);
+    setFinishTime(room.data.finishAt);
+    console.log(finishTime);
+    console.log(isJoinGA);
+
+  }
+
+  const checkIsJoinRoom = async (dataParticipants) => {
+    dataParticipants.map((participant) => {
+      if(participant.email === user.email){
+        console.log('test');
+        setIsJoinGA(true);
+        return;
+      }
     });
+  }
+
+  // const updateParticipants = async () => {
+  //   let response = await axios.get(
+  //     'https://lepasaja-backend.herokuapp.com/api/v1/rooms/b0d1c029-21a3-450b-98f2-21b43f737b36'
+  //   );
+  //   let room = await response.data;
+  //   setParticipants(await room.data.participants);
+  //   console.log(room.data.participants);
+  //   console.log(participants);
+  //   console.log(totalParticipants);
+  // }
+
+  useEffect(() => {
+    getRoomById();
+    getProfileById();
+    // getParticipantLists();
+  }, []);
+
+  // useEffect(() => {
+  //   if(isJoinGA){
+  //     updateParticipants();
+  //   }
+  //   console.log('hehe');
+    
+  // }, [isJoinGA])
+
+  const handleJoinRoom = (e) => {
+    e.preventDefault();
+    console.log('klik');
+    setIsJoinGA(true);
+    axios
+      .post
+        (
+          `https://lepasaja-backend.herokuapp.com/api/v1/rooms/b0d1c029-21a3-450b-98f2-21b43f737b36/join`,
+          {user},
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`
+            }
+          }
+        )
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch(err => console.log(err.message));
+  };
+  // axios
+  //   .get(
+  //     'https://virtserver.swaggerhub.com/ahmadnzr/LepasAja/1.0.0/rooms/5911a1cc-8780-4d1f-a509-45007d1ac8b0'
+  //   )
+  //   .then((res) => {
+  //     console.log(res.data.data);
+  //   });
   return (
     <>
       <div className={styles.container}>
@@ -22,10 +146,15 @@ const Event = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className={styles.main + `top-0 p-6`}>
-          <ProductDetail />
+          <ProductDetail roomInfo={dataRoom} handleJoinRoom={handleJoinRoom} isJoinRoom={isJoinGA}/>
           <div className="flex flex-row w-full">
-            <ParticipantList />
-            <RoomInfo />
+            {!isParticipant ? (
+              <div className='grow text-center'>Loading...</div>
+            ) : (
+              <ParticipantList participantLists={participants} />
+            )}
+            {console.log(totalParticipants)}
+            <RoomInfo totalParticipants={totalParticipants} finishTime={finishTime} />
           </div>
         </main>
       </div>

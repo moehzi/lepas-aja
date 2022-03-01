@@ -2,9 +2,18 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function CardProduct(props) {
+
+  const PATH_ROUTE_ID = 'giveaway/[id]';
+
   return (
     <div className="max-w-[250px] rounded-lg shadow-lg  bg-[#F0F0F0] ">
-      <Link href={`/giveaway/${props.id}`}>
+      {/* <Link href={`/giveaway/${props.id}`}> */}
+      <Link 
+        href={{ 
+          pathname: PATH_ROUTE_ID,
+          query: {id: props.roomId}
+         }}
+      >
         <a>
           <img
             src={props.src}

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -17,10 +18,49 @@ export const Authentication = () => {
 
 export const SignUp = async (email, password) => {
   await createUserWithEmailAndPassword(FirebaseAuth, email, password);
+  Authentication().onAuthStateChanged((user) => {
+    if (user) {
+      user.getIdToken().then(async (token) => {
+        await postRegister(token);
+      });
+    }
+  });
+};
+
+const postRegister = async (token) => {
+  let response = await axios.post(
+    `https://lepasaja-backend.herokuapp.com/api/v1/register`,
+    null,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const postLogin = async (token) => {
+  let response = await axios.post(
+    `https://lepasaja-backend.herokuapp.com/api/v1/register`,
+    null,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 export const SignIn = async (email, password) => {
   await signInWithEmailAndPassword(FirebaseAuth, email, password);
+  Authentication().onAuthStateChanged((user) => {
+    if (user) {
+      user.getIdToken().then(async (token) => {
+        console.log(token);
+        // await postRegister(token);
+      });
+    }
+  });
 };
 
 export const logout = async () => {
@@ -30,6 +70,14 @@ export const logout = async () => {
 export const GoogleAuth = async () => {
   const provider = new GoogleAuthProvider();
   await signInWithPopup(FirebaseAuth, provider);
+  Authentication().onAuthStateChanged((user) => {
+    if (user) {
+      user.getIdToken().then(async (token) => {
+        console.log(token);
+        // await postRegister(token);
+      });
+    }
+  });
 };
 
 export const FacebookAuth = async () => {

@@ -10,7 +10,12 @@ const AuthStateChangeProvider = ({ children }) => {
   const InitiateAuthStateChange = () => {
     Authentication().onAuthStateChanged((user) => {
       if (user) {
-        SetUser({ email: user.email, uid: user.uid });
+        user.getIdToken().then((token) => {
+          SetUser({ email: user.email, uid: user.uid, token: token });
+          // console.log(user.email);
+          // console.log(user.uid);
+          // console.log(token);
+        });
       } else {
         SetUser(InitialUserState);
       }

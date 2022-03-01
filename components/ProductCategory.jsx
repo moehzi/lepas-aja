@@ -11,6 +11,7 @@ export default function ProductCategory({categoryDataFunc}) {
         {category.map((data, index) => {
           return (
             <button
+              key={index}
               onClick={() => categoryDataFunc(index+1)}
               //index+1 -> bisa di ganti API filter dari backend
             >

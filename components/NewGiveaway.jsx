@@ -14,10 +14,11 @@ export default function NewGiveaway() {
 
   async function fetchData() {
     let response = await axios(
-      `https://virtserver.swaggerhub.com/moehzi/LepasAja/1.0.0/rooms`
+      `https://lepasaja-backend.herokuapp.com/api/v1/rooms`
     );
     let user = await response.data;
     setData(user.data);
+    console.log(user.data);
   }
 
   useEffect(() => {
@@ -31,13 +32,15 @@ export default function NewGiveaway() {
       </h1>
       <Carousel breakPoints={breakPoints}>
         {data.map((item, index) => {
+          console.log(item);
           return (
             <CardProduct
               key={index}
               name={item.name}
               owner={item.owner}
-              src={item.products.photoUrl}
+              src={item.photoUrl}
               location={item.location}
+              roomId={item.id}
             />
           );
         })}
