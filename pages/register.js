@@ -4,7 +4,6 @@ import { useRouter } from 'next/dist/client/router';
 import { SignUp, GoogleAuth, FacebookAuth, GetSignInErrorMessage } from '../services/Auth';
 import withUnProtected from '../hoc/withUnprotected';
 
-
 const register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

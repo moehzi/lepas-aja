@@ -20,9 +20,7 @@ export default function Home() {
 
   const getCategoryData = (childCategoryData) => {
     setCategory(childCategoryData);
-    // nanti disini olah data backendnya terus simpen ke salah satu state (contoh category)
-    // Nah state category di pass sebagai props ke ProductGiveaway
-  }
+  };
 
   useEffect(() => {
     console.log(category);

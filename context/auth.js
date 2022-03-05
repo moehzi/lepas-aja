@@ -3,6 +3,7 @@ import { InitialUserState, useUser } from './user';
 import { Authentication } from '../services/Auth';
 import { ACCESS_TOKEN, USER } from "../config/localStorage";
 import useLocalStorage from '../hooks/useLocalStorage';
+import { Box, CircularProgress } from '@mui/material';
 
 const AuthStateChangeProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +22,7 @@ const AuthStateChangeProvider = ({ children }) => {
           // console.log(user.email);
           // console.log(user.uid);
           // console.log(token);
+          console.log(token);
         });
       } else {
         SetUser(InitialUserState);
@@ -36,7 +38,16 @@ const AuthStateChangeProvider = ({ children }) => {
   }, []);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return children;

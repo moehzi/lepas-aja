@@ -7,6 +7,8 @@ import {
   signInWithPopup,
   signOut,
   getAuth,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
 } from 'firebase/auth';
 import { app } from '../config/firebase.config';
 import { ACCESS_TOKEN, USER } from '../config/localStorage';
@@ -42,7 +44,6 @@ const postRegister = async (token) => {
 
 export function getAccessToken() {
   try {
-    // console.log(`Bearer ${JSON.parse(localStorage.getItem(ACCESS_TOKEN) || "null")}`);
     return `Bearer ${JSON.parse(localStorage.getItem(ACCESS_TOKEN) || "null")}`;
   } catch {
     return null;
@@ -82,7 +83,7 @@ export const GoogleAuth = async () => {
     if (user) {
       user.getIdToken().then(async (token) => {
         console.log(token);
-        // await postRegister(token);
+        await postRegister(token);
       });
     }
   });
@@ -102,3 +103,11 @@ export const GetSignInErrorMessage = (code) => {
       return 'Email atau password salah';
   }
 };
+
+export const sendEmailResetPassword = async(email) => {
+  await sendPasswordResetEmail(FirebaseAuth, email);
+}
+
+export const sendResetPassword = async(oobCode, newPassword) => {
+  await confirmPasswordReset(FirebaseAuth, oobCode, newPassword);
+}

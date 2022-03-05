@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import CardProduct from './CardProduct';
-import axios from 'axios';
+import { getAllRooms } from '../services/giveaway';
 
 const ProductGiveaway = () => {
   const [visible, setVisible] = useState(8);
-
   const [data, setData] = useState([]);
 
-  async function fetchData() {
-    let response = await axios(
-      `https://virtserver.swaggerhub.com/moehzi/LepasAja/1.0.0/products`
-    );
-    let user = await response.data;
-    setData(user.data);
-  }
-
   useEffect(() => {
-    fetchData();
+    getAllRooms(setData);
   }, []);
 
   const showMoreItem = () => {
@@ -25,13 +16,6 @@ const ProductGiveaway = () => {
 
   return (
     <section className="flex flex-col mt-14 gap-y-12 max-w-[1100px]">
-      <div className="flex flex-col items-center">
-        <h1 className="font-bold text-[#DF8D9F] text-center text-4xl">
-          PRODUCT GIVEAWAY
-        </h1>
-        <div className="border-b-[3px] border-[#DF8D9F] max-w-[192px] w-full mt-3"></div>
-      </div>
-
       <div className="flex flex-wrap gap-8 mx-auto mt-8">
         {data.slice(0, visible).map((item, index) => {
           return (

@@ -6,6 +6,8 @@ import Head from 'next/head';
 import ParticipantList from '../../components/ParticipantList';
 import RoomInfo from '../../components/RoomInfo';
 import axios from 'axios';
+import { useState } from 'react';
+import { useRouter } from 'next/dist/client/router';
 
 import { useUser } from '../../context/user';
 import { useRouter } from 'next/router';
