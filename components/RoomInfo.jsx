@@ -5,15 +5,17 @@ export default function RoomInfo({totalParticipants, finishTime}) {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   function calculateTimeLeft(){
-    // let year = new Date().getFullYear();
-    // console.log(timeLeft);
+    
     const difference = +finishTime - +new Date().getTime();
-
-    // console.log(difference);
   
-    let timeLeft = {};
+    let timeLeft = {
+      // days: Math.floor(99999999999 / (1000*60*60*24)),
+      // hours: Math.floor((99999999999 / (1000*60*60)) % 24),
+      // minutes: Math.floor((99999999999 / 1000 / 60) % 60),
+      // seconds: Math.floor((99999999999 / 1000) % 60),
+    };
   
-    if(difference > 0){
+    if(difference >= 0){
       timeLeft = {
         days: Math.floor(difference / (1000*60*60*24)),
         hours: Math.floor((difference / (1000*60*60)) % 24),
@@ -39,7 +41,7 @@ export default function RoomInfo({totalParticipants, finishTime}) {
     if(!timeLeft[interval]) return;
 
     timerComponents.push(
-      <span>
+      <span className="bg-[#C4C4C4] font-bold text-lg px-2 py-2 mx-1 rounded-lg my-2">
         {timeLeft[interval]} {interval}{" "}
       </span>
     );
@@ -48,25 +50,11 @@ export default function RoomInfo({totalParticipants, finishTime}) {
   return (
     <div className="p-5 bg-grey basis-1/4 text-center">
       <div className="p-2 bg-slate-200 rounded-lg ">
-        <p>countdown</p>
+        <p className="font-bold text-2xl">Countdown</p>
       </div>
-      <div className="flex justify-between">
-        {timerComponents.length ? timerComponents : <span>Time's up!</span>}
+      <div className="flex justify-center">
+        {timerComponents.length ? timerComponents : <span className="font-bold text-xl py-2 px-2">Time's up!</span>}
       </div>
-      {/* <div className="flex justify-between">
-        <div className="p-2  px-6 bg-slate-200 m-2 rounded-lg">
-          <p className="font-bold text-xl">03</p> <p>day</p>
-        </div>
-        <div className="p-2  px-6 bg-slate-200 m-2 rounded-lg">
-          <p className="font-bold text-xl">03</p> <p>Hour</p>
-        </div>
-        <div className="p-2  px-6 bg-slate-200 m-2 rounded-lg">
-          <p className="font-bold text-xl">03</p> <p>Minute</p>
-        </div>
-        <div className="p-2  px-6 bg-slate-200 m-2 rounded-lg">
-          <p className="  font-bold text-xl">03</p> <p>Second</p>
-        </div>
-      </div> */}
       <div className="w-full bg-slate-200 rounded-lg p-3">
         <h3 className="text-left font-bold px-8 py-1 text-xl">
           Total Peserta:

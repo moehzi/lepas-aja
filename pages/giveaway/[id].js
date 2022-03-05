@@ -8,18 +8,16 @@ import RoomInfo from '../../components/RoomInfo';
 import axios from 'axios';
 
 import { useUser } from '../../context/user';
-import participants1 from '../../data/participants';
 import { useRouter } from 'next/router';
-import moment from 'moment';
+import { getUIDUser, getAccessToken } from '../../services/Auth';
+import { GIVEAWAY_LINK } from '../../config/giveaway';
 
 const Event = () => {
 
   const user = useUser();
   const router = useRouter();
-  const participantLists = participants1;
   const queryId = router.query.id;
 
-  console.log(queryId);
 
   // State
   const [dataRoom, setRoomData] = useState({});
@@ -31,13 +29,15 @@ const Event = () => {
   const [finishTime, setFinishTime] = useState(0);
 
   const getProfileById = async () => {
-    console.log(user);
+    const userUID = getUIDUser();
+    console.log(user.token);
+    console.log(userUID);
+    console.log(queryId);
     let response = await axios.get(
-      `https://lepasaja-backend.herokuapp.com/api/v1/users/${user.uid}`
+      `https://lepasaja-backend.herokuapp.com/api/v1/users/${userUID}`
     );
 
     let biodata = await response.data;
-    // console.log(biodata.data);
     setDataBio(biodata.data);
   }
 
@@ -47,96 +47,53 @@ const Event = () => {
     );
 
     let room = await response.data;
-    const tempDate1 = new Date(0);
-    const tempDate2 = new Date(0);
-    // console.log(new Date('10/01/2022'));
-    const difference = +new Date(`03/07/2022`) - +new Date();
-    console.log(difference);
-    // console.log(tempDate);
-    // console.log(moment.unix(room.data.startAt));
-    // console.log(moment.unix(room.data.finishAt));
-    console.log(new Date(tempDate1.setUTCSeconds(room.data.startAt)));
-    console.log(new Date(tempDate2.setUTCSeconds(room.data.finishAt)));
-    console.log(new Date(`2022-03-25T12:00:00Z`).getTime());
-    console.log(room.data.startAt);
-    console.log(room.data.finishAt);
-    // // await console.log(user.token);
     setRoomData(room.data);
     setParticipants(room.data.participants);
-    console.log(participants);
     setIsParticipant(true);
     setTotalParticipants(room.data.participants.length);
-    console.log(isJoinGA);
     await checkIsJoinRoom(room.data.participants);
-    setFinishTime(room.data.finishAt);
-    console.log(finishTime);
-    console.log(isJoinGA);
-
+    setFinishTime(room.data.finishAt*1000);
   }
 
   const checkIsJoinRoom = async (dataParticipants) => {
     dataParticipants.map((participant) => {
       if(participant.email === user.email){
-        console.log('test');
         setIsJoinGA(true);
         return;
       }
     });
   }
 
-  // const updateParticipants = async () => {
-  //   let response = await axios.get(
-  //     'https://lepasaja-backend.herokuapp.com/api/v1/rooms/b0d1c029-21a3-450b-98f2-21b43f737b36'
-  //   );
-  //   let room = await response.data;
-  //   setParticipants(await room.data.participants);
-  //   console.log(room.data.participants);
-  //   console.log(participants);
-  //   console.log(totalParticipants);
-  // }
-
   useEffect(() => {
     getRoomById();
     getProfileById();
-    // getParticipantLists();
+    getUIDUser();
   }, []);
 
-  // useEffect(() => {
-  //   if(isJoinGA){
-  //     updateParticipants();
-  //   }
-  //   console.log('hehe');
-    
-  // }, [isJoinGA])
 
   const handleJoinRoom = (e) => {
     e.preventDefault();
-    console.log('klik');
     setIsJoinGA(true);
+    
     axios
       .post
         (
-          `https://lepasaja-backend.herokuapp.com/api/v1/rooms/b0d1c029-21a3-450b-98f2-21b43f737b36/join`,
+          `https://lepasaja-backend.herokuapp.com/api/v1/rooms/${queryId}/join`,
           {user},
           {
             headers: {
-              Authorization: `Bearer ${user.token}`
-            }
+              Authorization: getAccessToken()
+            },
           }
         )
       .then(res => {
         console.log(res);
         console.log(res.data);
+        router.replace(`/giveaway/${queryId}`);
       })
-      .catch(err => console.log(err.message));
+      .catch(err => console.log(err));
   };
-  // axios
-  //   .get(
-  //     'https://virtserver.swaggerhub.com/ahmadnzr/LepasAja/1.0.0/rooms/5911a1cc-8780-4d1f-a509-45007d1ac8b0'
-  //   )
-  //   .then((res) => {
-  //     console.log(res.data.data);
-  //   });
+
   return (
     <>
       <div className={styles.container}>
@@ -153,7 +110,6 @@ const Event = () => {
             ) : (
               <ParticipantList participantLists={participants} />
             )}
-            {console.log(totalParticipants)}
             <RoomInfo totalParticipants={totalParticipants} finishTime={finishTime} />
           </div>
         </main>

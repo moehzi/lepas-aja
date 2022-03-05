@@ -9,6 +9,7 @@ import {
   getAuth,
 } from 'firebase/auth';
 import { app } from '../config/firebase.config';
+import { ACCESS_TOKEN, USER } from '../config/localStorage';
 
 export const FirebaseAuth = getAuth(app);
 
@@ -39,17 +40,24 @@ const postRegister = async (token) => {
   );
 };
 
-const postLogin = async (token) => {
-  let response = await axios.post(
-    `https://lepasaja-backend.herokuapp.com/api/v1/register`,
-    null,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-};
+export function getAccessToken() {
+  try {
+    // console.log(`Bearer ${JSON.parse(localStorage.getItem(ACCESS_TOKEN) || "null")}`);
+    return `Bearer ${JSON.parse(localStorage.getItem(ACCESS_TOKEN) || "null")}`;
+  } catch {
+    return null;
+  }
+}
+
+export function getUIDUser(){
+  try {
+    // return JSON.parse(localStorage.getItem(USER))
+    return (JSON.parse(localStorage.getItem(USER)).uid);
+  } catch {
+    console.log('error');
+    return null;
+  }
+}
 
 export const SignIn = async (email, password) => {
   await signInWithEmailAndPassword(FirebaseAuth, email, password);

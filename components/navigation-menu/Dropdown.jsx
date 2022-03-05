@@ -65,6 +65,20 @@ const Dropdown = () => {
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
+                <LinkDropdown href="/history">
+                  <a
+                    className={classNames(
+                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                      'block px-4 py-2 text-md'
+                    )}
+                  >
+                    History
+                  </a>
+                </LinkDropdown>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
                 <LinkDropdown href="/create-room">
                   <a
                     className={classNames(
