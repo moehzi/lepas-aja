@@ -1,16 +1,6 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  signOut,
-  getAuth,
-  sendPasswordResetEmail,
-  confirmPasswordReset,
-} from 'firebase/auth';
-import { app } from '../config/firebase.config';
-import axios from 'axios';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, getAuth, sendPasswordResetEmail, confirmPasswordReset } from "firebase/auth";
+import { app } from "../config/firebase.config";
+import axios from "axios";
 
 export const FirebaseAuth = getAuth(app);
 
@@ -30,15 +20,11 @@ export const SignUp = async (email, password) => {
 };
 
 const postRegister = async (token) => {
-  let response = await axios.post(
-    `https://lepasaja-backend.herokuapp.com/api/v1/register`,
-    null,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  let response = await axios.post(`https://lepasaja-backend.herokuapp.com/api/v1/register`, null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const SignIn = async (email, password) => {
@@ -68,18 +54,18 @@ export const FacebookAuth = async () => {
 
 export const GetSignInErrorMessage = (code) => {
   switch (code) {
-    case 'auth/user-not-found':
-      return 'Email tidak terdaftar';
-    case 'auth/wrong-password':
+    case "auth/user-not-found":
+      return "Email tidak terdaftar";
+    case "auth/wrong-password":
     default:
-      return 'Email atau password salah';
+      return "Email atau password salah";
   }
 };
 
-export const sendEmailResetPassword = async(email) => {
+export const sendEmailResetPassword = async (email) => {
   await sendPasswordResetEmail(FirebaseAuth, email);
-}
+};
 
-export const sendResetPassword = async(oobCode, newPassword) => {
+export const sendResetPassword = async (oobCode, newPassword) => {
   await confirmPasswordReset(FirebaseAuth, oobCode, newPassword);
-}
+};
