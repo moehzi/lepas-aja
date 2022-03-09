@@ -5,13 +5,16 @@ import StatusButton from './StatusButton';
 import { findWinner } from '../../../services/giveaway';
 import { useRouter } from 'next/router';
 import { ModalUndi } from './ModalUndi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Alert } from '@mui/material';
 
 const ProductDetail = ({ id, data, products }) => {
   const user = useUser();
   const isOwner = data.ownerId === user.uid;
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const handleModalUndi = (e) => {
     e.preventDefault();
@@ -25,15 +28,52 @@ const ProductDetail = ({ id, data, products }) => {
   const handleUndi = async () => {
     try {
       await findWinner(id, user.token);
-      router.replace('/profile/giveaway-history');
+      setIsOpen(false);
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.replace('/profile/giveaway-history');
+      }, 3500);
     } catch (e) {
       console.error(e);
+      setIsError(true);
     }
   };
+
+  // useEffect(() => {
+  //   if(isSuccess){
+  //     setTimeout(() => {
+  //       setIsSuccess(false);
+  //     }, 3000)
+  //   }
+  // }, [isSuccess]);
+
+  useEffect(() => {
+    if(isError){
+      setTimeout(() => {
+        setIsError(false);
+      }, 5000)
+    }
+  }, [isError]);
 
   return (
     <section className="container p-5 mx-auto">
       <div className="border border-red-600 w-full min-h-[400px] rounded-lg h-full flex p-8">
+        {/* <div className='relative'> */}
+          {isSuccess && (
+            <div className='fixed left-0 bottom-0 z-10 mb-2 ml-2'>
+              <Alert variant='filled' severity='success'>
+                Anda telah berhasil mengundi pemenang!
+              </Alert>
+            </div>
+          )}
+          {isError && (
+            <div className='fixed left-0 bottom-0 z-10 mb-2 ml-2'>
+              <Alert variant='filled' severity='error'>
+                Anda tidak dapat mengundi pemenang!
+              </Alert>
+            </div>
+          )}
+        {/* </div> */}
         <div className="items-center w-full text-center align-middle">
           <PhotoShowcase products={products} />
         </div>

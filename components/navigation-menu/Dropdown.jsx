@@ -6,6 +6,7 @@ import { logout } from '../../services/Auth';
 import { useUser } from '../../context/user';
 import { useRouter } from 'next/dist/client/router';
 import { getProfileById } from '../../services/api';
+import { Alert } from '@mui/material';
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(' ');
@@ -24,8 +25,14 @@ const Dropdown = () => {
   const user = useUser();
   const router = useRouter();
   const [image, setImage] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   async function handleLogout() {
-    await logout();
+    setIsSuccess(true);
+    setTimeout(() => {
+      logout();
+      router.replace('/');
+    }, 1500)
   }
   useEffect(() => {
     getProfileById(user.uid).then((data) => {
@@ -33,9 +40,26 @@ const Dropdown = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if(isSuccess){
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 1000)
+    }
+  }, [isSuccess]);
+
   return (
     <Menu as="div" className="relative z-50 inline-block text-left">
       <div>
+        <div className='relative'>
+          {isSuccess && (
+            <div className='fixed left-0 bottom-0 mb-5 ml-3'>
+              <Alert variant='filled' severity='success'>
+                Anda berhasil logout!
+              </Alert>
+            </div>
+          )}
+        </div>
         <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-gray-700 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
           <span className="mr-1">{user.email}</span>
           <img

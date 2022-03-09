@@ -55,6 +55,9 @@ const MyProduct = ({ productsData, id, category }) => {
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  
+  const [successText, setSuccessText] = useState('');
+  const [errorText, setErrorText] = useState('');
 
   function closeModalDelete() {
     setIsOpenDelete(false);
@@ -142,29 +145,48 @@ const MyProduct = ({ productsData, id, category }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = {
-      name: productById.name,
-      description: productById.description,
-      category: categoryState,
-    };
-
-    editProduct(productId, payload, user.token).then(() => {
-      setIsOpenEdit(false);
-      setIsRoomUpdate(true);
-    });
+    try {
+      const payload = {
+        name: productById.name,
+        description: productById.description,
+        category: categoryState,
+      };
+  
+      editProduct(productId, payload, user.token).then(() => {
+        setIsOpenEdit(false);
+        setIsRoomUpdate(true);
+        setIsSuccess(true);
+        setSuccessText('Anda telah berhasil mengedit barang!');
+      });
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorText('Anda tidak dapat mengedit barang!')
+    }
+    
   };
 
   const handleUploadPhoto = (e) => {
     e.preventDefault();
-    const form = new FormData();
-    form.append('productPhoto', image);
-    form.append('title', photo.title);
-    form.append('alt', photo.alt);
 
-    postProductPhoto(productId, form, user.token).then(() => {
-      setIsOpenUpload(false);
-      setIsRoomUpdate(true);
-    });
+    try {
+      const form = new FormData();
+      form.append('productPhoto', image);
+      form.append('title', photo.title);
+      form.append('alt', photo.alt);
+
+      postProductPhoto(productId, form, user.token).then(() => {
+        setIsOpenUpload(false);
+        setIsRoomUpdate(true);
+        setIsSuccess(true);
+        setSuccessText('Anda telah berhasil mengganti foto!');
+      });
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorText('Anda tidak dapat mengganti foto!')
+    }
+    
   };
 
   const handleImageChange = (e) => {
@@ -185,11 +207,19 @@ const MyProduct = ({ productsData, id, category }) => {
       roomId: id,
       qty: 1,
     };
-    postProductData(payload, user.token).then((res) => {
-      setIsOpenAdd(false);
-      setIsRoomUpdate(true);
-      setIsSuccess(true);
-    });
+    try {
+      postProductData(payload, user.token).then((res) => {
+        setIsOpenAdd(false);
+        setIsRoomUpdate(true);
+        setIsSuccess(true);
+        setSuccessText('Anda telah berhasil menambahkan barang!');
+      });
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorText('Anda tidak dapat menambahkan barang!')
+    }
+    
   };
 
   const handleModalAdd = (e) => {
@@ -201,22 +231,41 @@ const MyProduct = ({ productsData, id, category }) => {
 
   const handleModalEdit = (e) => {
     e.preventDefault();
-    const getProductId = e.target.id;
-    if (getProductId) {
-      setProductId(getProductId);
-      setIsOpenEdit(true);
+    try {
+      const getProductId = e.target.id;
+      if (getProductId) {
+        setProductId(getProductId);
+        setIsOpenEdit(true);
+        setIsSuccess(true);
+        setSuccessText('Anda telah berhasil mengedit barang!');
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorText('Anda tidak dapat mengedit barang!');
     }
+    
   };
   const handleDelete = () => {
-    deleteProduct(user.token, productId);
-    setIsOpenDelete(false);
-    setIsRoomUpdate(true);
+    try {
+      deleteProduct(user.token, productId);
+      setIsOpenDelete(false);
+      setIsRoomUpdate(true);
+      setIsSuccess(true);
+      setSuccessText('Anda telah berhasil menghapus barang!');
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorText('Anda tidak dapat menghapus barang!');
+    }
+    
   };
 
   useEffect(() => {
     if(isSuccess){
       setTimeout(() => {
         setIsSuccess(false);
+        setSuccessText('');
       }, 3000)
     }
   }, [isSuccess]);
@@ -225,6 +274,7 @@ const MyProduct = ({ productsData, id, category }) => {
     if(isError){
       setTimeout(() => {
         setIsError(false);
+        setErrorText('');
       }, 5000)
     }
   }, [isError]);
@@ -249,14 +299,14 @@ const MyProduct = ({ productsData, id, category }) => {
           {isSuccess && (
           <div className=''>
             <Alert variant='filled' severity='success'>
-              Anda telah berhasil menambahkan barang!
+              {successText}
             </Alert>
           </div>
           )}
           {isError && (
             <div className=''>
               <Alert variant='filled' severity='error'>
-                Anda tidak dapat menambahkan barang!
+                {errorText}
               </Alert>
             </div>
           )}
